@@ -1,3 +1,11 @@
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <cstdlib>
+#include <cmath>
+#include <vector>
+
 class MergedRegionScintellatorView {
     vector<MeshedRegion> getMeshedRegions() {
         // set up variables to analyze meshes
@@ -143,4 +151,121 @@ class MergedRegionScintellatorView {
         	}
         
     }
+    
+    void DefineIsects(int i, int j,vector< vector<MeshScintillator > >& S1Mesh, Sphereisect sphere1, double z_isect[]){
+    	z_isect[0]=FindSpherePoint(sphere1.getRadius(),S1Mesh[i][j].getxMax()-sphere1.getXVert(), \
+    					S1Mesh[i][j].getyMax()-sphere1.getYVert()) +sphere1.getZVert();  //Fix for arrays 1,2 and 3
+    	z_isect[1]=sqrt( sphere1.getRadius()*sphere1.getRadius() - pow(S1Mesh[i][j].getxMin()-sphere1.getXVert(),2) \
+    					- pow(S1Mesh[i][j].getyMax()-sphere1.getYVert(),2) ) +sphere1.getZVert();
+    	z_isect[2]=sqrt( sphere1.getRadius()*sphere1.getRadius() - pow(S1Mesh[i][j].getxMax()-sphere1.getXVert(),2) \
+    					- pow(S1Mesh[i][j].getyMin()-sphere1.getYVert(),2) ) +sphere1.getZVert();
+    	z_isect[3]=sqrt( sphere1.getRadius()*sphere1.getRadius() - pow(S1Mesh[i][j].getxMin()-sphere1.getXVert(),2) \
+    					- pow(S1Mesh[i][j].getyMin()-sphere1.getYVert(),2) ) +sphere1.getZVert();
+
+    }
+
+    double FindSpherePoint(double r, double dim1, double dim2) {
+    	double Point=sqrt( pow(r,2) - pow(dim1,2) - pow(dim2,2) );
+    	return Point;
+    }
+
+
+    void bubbleSort(double arr[], int n) {
+          bool swapped = true;
+          int j = 0;
+          double tmp;
+          while (swapped) {
+                swapped = false;
+                j++;
+                for (int i = 0; i < n - j; i++) {
+                      if (arr[i] > arr[i + 1]) {
+                            tmp = arr[i];
+                            arr[i] = arr[i + 1];
+                            arr[i + 1] = tmp;
+                            swapped = true;
+                      }
+                }
+          }
+    }
+    
+    double FindFrustumTetra(double sorted_isect[],double z_isect[],int i, int j,vector < vector<MeshScintillator > >& S1Mesh,Sphereisect  sphere1,double temp, double testHeight){
+
+    	double A1,A2,test_Xlen,test_Xlen2,test_Ylen,test_Ylen2,test_Vol;
+    	if(sqrt(abs(pow(sphere1.getRadius(),2)-pow(temp-sphere1.getZVert(),2)))<=abs(S1Mesh[i][j].getxMax())){
+    		test_Xlen=abs(S1Mesh[i][j].getxMax())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getyMax()-sphere1.getYVert())+sphere1.getXVert());
+    		A1=0.5*test_Xlen*testHeight;
+    		test_Xlen2=abs(S1Mesh[i][j].getxMax())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getyMin()-sphere1.getYVert())+sphere1.getXVert());
+    		A2=0.5*test_Xlen2*testHeight;
+    		test_Vol=(A1+A2+sqrt(A1*A2))/3;
+    		cout<<"line 264, Ylen= "<<test_Ylen<<", Ylen2= "<<test_Ylen2<<", Zlen= "<<testHeight<<", ";
+    	}
+    	else if (sqrt(abs(pow(sphere1.getRadius(),2)-pow(temp-sphere1.getZVert(),2)))<=abs(S1Mesh[i][j].getxMin())){
+    		test_Xlen=abs(S1Mesh[i][j].getxMin())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getyMax()-sphere1.getYVert())+sphere1.getXVert());
+    		A1=0.5*test_Xlen*testHeight;
+    		test_Xlen2=abs(S1Mesh[i][j].getxMin())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getyMin()-sphere1.getYVert())+sphere1.getXVert());
+    		A2=0.5*test_Xlen2*testHeight;
+    		test_Vol=(A1+A2+sqrt(A1*A2))/3;
+    		cout<<"line 272, Ylen= "<<test_Ylen<<", Ylen2= "<<test_Ylen2<<", Zlen= "<<testHeight<<", ";
+    	}
+    	else if (sqrt(abs(pow(sphere1.getRadius(),2)-pow(temp-sphere1.getZVert(),2)))<=abs(S1Mesh[i][j].getyMax())){
+    		test_Ylen=abs(S1Mesh[i][j].getyMax())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getxMin()-sphere1.getXVert())+sphere1.getYVert());
+    		A1=0.5*test_Ylen*testHeight;
+    		test_Ylen2=abs(S1Mesh[i][j].getyMax())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getxMax()-sphere1.getXVert())+sphere1.getYVert());
+    		A2=0.5*test_Ylen2*testHeight;
+    		test_Vol=(A1+A2+sqrt(A1*A2))/3;
+    		cout<<"line 280, Ylen= "<<test_Ylen<<", Ylen2= "<<test_Ylen2<<", Zlen= "<<testHeight<<", ";
+    	}
+    	else{
+    		test_Ylen=abs(S1Mesh[i][j].getyMin())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getxMax()-sphere1.getXVert())+sphere1.getYVert());
+    		A1=0.5*test_Ylen*testHeight;
+    		test_Ylen2=abs(S1Mesh[i][j].getyMin())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getxMin()-sphere1.getXVert())+sphere1.getYVert());
+    		A2=0.5*test_Ylen2*testHeight;
+    		test_Vol=(A1+A2+sqrt(A1*A2))/3;
+    		cout<<"line 288, Ylen= "<<test_Ylen<<", Ylen2= "<<test_Ylen2<<", Zlen= "<<testHeight<<", ";
+    	}
+    	return test_Vol;
+    } 
+
+
+    double FindTetraVol(double sorted_isect[],double z_isect[],int i, int j,vector < vector<MeshScintillator > >& S1Mesh,Sphereisect  sphere1,double temp, double testHeight){
+    	double test_Xlen,test_Ylen, test_Vol;
+    	if(sorted_isect[0]==z_isect[0]){
+    		test_Xlen=abs(S1Mesh[i][j].getxMax())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getyMax()-sphere1.getYVert())+sphere1.getXVert());
+    		test_Ylen=abs(S1Mesh[i][j].getyMax())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getxMax()-sphere1.getXVert())+sphere1.getYVert());		 
+    		test_Vol=testHeight*test_Xlen*test_Ylen/6;
+    	}
+    	else if (sorted_isect[0]==z_isect[1]){
+    		test_Xlen=abs(S1Mesh[i][j].getxMin())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getyMax()-sphere1.getYVert())+sphere1.getXVert());
+    		test_Ylen=abs(S1Mesh[i][j].getyMax())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getxMin()-sphere1.getXVert())+sphere1.getYVert());
+    		test_Vol=testHeight*test_Xlen*test_Ylen/6;
+    	}
+    	else if (sorted_isect[0]==z_isect[2]){
+    		test_Xlen=abs(S1Mesh[i][j].getxMax())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getyMin()-sphere1.getYVert())+sphere1.getXVert());
+    		test_Ylen=abs(S1Mesh[i][j].getyMin())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getxMax()-sphere1.getXVert())+sphere1.getYVert());
+    		test_Vol=testHeight*test_Xlen*test_Ylen/6;
+    	}
+    	else{
+    		test_Xlen=abs(S1Mesh[i][j].getxMin())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getyMin()-sphere1.getYVert())+sphere1.getXVert());					 
+    		test_Ylen=abs(S1Mesh[i][j].getyMin())-abs(FindSpherePoint(sphere1.getRadius(),temp-sphere1.getZVert()\
+    						,S1Mesh[i][j].getxMin()-sphere1.getXVert())+sphere1.getYVert());
+    		test_Vol=testHeight*test_Xlen*test_Ylen/6;
+    	}
+    	return test_Vol;
+    }
+    
 }

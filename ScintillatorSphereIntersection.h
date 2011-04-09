@@ -15,7 +15,9 @@ class ScintillatorSphereIntersection {
         int maxRowSize = scintillator.getMaxRowSize();
         int maxColSize = scintillator.getMaxColumnSize();
         
-        vector<vector<MeshRegion>> meshRegions = scintillator.getMeshRegions();;
+        ScintillatorRectangularParallelpipedView rppView = ScintillatorRectangularParallelpipedView(scintellator);
+        
+        vector<vector<MeshRegion>> meshRegions = rppView.getMeshRegions();;
     	
     	Trangloid[] ts = scintellator.getTriangloids()
         for(i = 0; i <= ts.size(); i++) {
