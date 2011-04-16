@@ -1,6 +1,4 @@
-GATinp.txt
-GEOinp.txt
-LATinp.txt
-a.out
-*.gch
-
+*.swp
+build
+*/build
+.DS_Store

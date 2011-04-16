@@ -2,7 +2,7 @@
 #define SCINTILLATOR_H
 
 class Scintillator {
-    string name;
+    // string name;
     int yMesh, zmesh;
     double xLength, yLength, zLength, xVert, yVert, zVert;
     
@@ -15,7 +15,7 @@ class Scintillator {
     void setYMesh(int y) {this->yMesh = y;}
     void setZMesh(int z) {this->zmesh = z;}
     void setXLength(double x) { this->xLength = x;}
-    void setYLength(double Y) {this->yLength = y;}
+    void setYLength(double y) {this->yLength = y;}
     void setZLength(double z) {this->zLength = z;}
     void setXVert(double x) {this->xVert = x;}
     void setYVert(double y) {this->yVert = y;}
@@ -33,13 +33,13 @@ class Scintillator {
 };
 
 Scintillator::Scintillator(double xLen, double yLen, double zLen, int yMesh, int zMesh, double xVert, double yVert, double zVert) {
-    this->xLen = xLen;
-    this->yLen = yLen;
-    this->zLen = zLen;
-    this->yMesh = yMesh;
-    this->zMesh = zMesh;
-    this->xVert = xVert;
-    this->yVert = yVert;
-    this->zVert = zVert;
+   this->setXLength(xLen);
+   this->setYLength(yLen);
+   this->setZLength(zLen);
+   this->setYMesh(yMesh);
+   this->setZMesh(zMesh);
+   this->setXVert(xVert);
+   this->setYVert(yVert);
+   this->setZVert(zVert);
 }
 #endif

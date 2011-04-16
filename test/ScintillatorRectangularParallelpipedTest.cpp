@@ -1,0 +1,16 @@
+#include <gtest/gtest.h>
+#include "../src/RectangularParallelpiped.h"
+#include "../src/MeshRegion.h"
+
+TEST(ScintillatorRectangularParallelpiped, Constructor) {
+  RectangularParallelpiped* m = new RectangularParallelpiped(1, 2, 1.1, 1.2, 2.1, 2.2, 3.0, 4.0);
+  
+  EXPECT_EQ(1, m->getXLocation());
+  EXPECT_EQ(2, m->getYLocation());
+  EXPECT_EQ(1.1, m->getXMinimum());
+  EXPECT_EQ(1.2, m->getXMaximum());
+  EXPECT_EQ(2.1, m->getYMinimum());
+  EXPECT_EQ(2.2, m->getYMaximum());
+  EXPECT_EQ(3.0, m->getHeight());
+  EXPECT_EQ(4.0, m->getElevation());
+}
