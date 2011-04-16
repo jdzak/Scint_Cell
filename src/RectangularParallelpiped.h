@@ -11,9 +11,9 @@ class RectangularParallelpiped: public MeshRegion {
   int xLocation, yLocation;
   
   // string PART_NAME = "Scint";;
-  string PART_NAME;
+  static const string PART_NAME;
   // string PART_TYPE = "ag_rpp10";;
-  string PART_TYPE;
+  static const string PART_TYPE;
   
   public:
   
@@ -60,10 +60,15 @@ class RectangularParallelpiped: public MeshRegion {
 
 
   string toGeo(void) {
-    ostringstream strs;
-    strs << "'" << PART_NAME << "_" << xLocation << yLocation << "'  '" << PART_TYPE << "' /" << endl;
-    strs << xMinimum << ", " << xMaximum << ", " << yMinimum << ", " << yMaximum<< ", " << elevation << ", " << height<<" /" << endl;
-    strs << "'NULL' /" << endl;
-    return strs.str();
+    ostringstream s;
+    s.precision(1);
+    s.setf(ios::fixed,ios::floatfield);
+    s << "'" << PART_NAME << "_" << xLocation << yLocation << "' '" << PART_TYPE << "' /" << endl;
+    s << xMinimum << ", " << xMaximum << ", " << yMinimum << ", " << yMaximum<< ", " << elevation << ", " << height<<" /" << endl;
+    s << "'NULL' /";
+    return s.str();
   }
 };
+
+const string RectangularParallelpiped::PART_NAME = "Scint";;
+const string RectangularParallelpiped::PART_TYPE = "ag_rpp10";;
